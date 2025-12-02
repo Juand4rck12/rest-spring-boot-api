@@ -2,7 +2,9 @@ package com.api.crud.api_crud.service;
 
 import com.api.crud.api_crud.exceptions.ResourceNotFoundException;
 import com.api.crud.api_crud.model.Project;
+import com.api.crud.api_crud.model.User;
 import com.api.crud.api_crud.repository.ProjectRepository;
+import com.api.crud.api_crud.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
 
     public List<Project> listAllProjects() {
         return projectRepository.findAll();
@@ -23,6 +26,10 @@ public class ProjectService {
     }
 
     public Project addProject(Project project) {
+        User userExists = userRepository.findById(project.getUserId().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        project.setUserId(userExists);
+
         return projectRepository.save(project);
     }
 
@@ -30,9 +37,12 @@ public class ProjectService {
         Project existsProject = projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Proyecto no encontrado"));
 
+        User userExists = userRepository.findById(project.getUserId().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
         existsProject.setName(project.getName());
         existsProject.setDescription(project.getDescription());
-        existsProject.setUserId(project.getUserId());
+        existsProject.setUserId(userExists);
 
         return projectRepository.save(existsProject);
     }
