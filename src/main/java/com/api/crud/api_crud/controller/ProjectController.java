@@ -5,6 +5,7 @@ import com.api.crud.api_crud.exceptions.ResourceNotFoundException;
 import com.api.crud.api_crud.model.Project;
 import com.api.crud.api_crud.response.ApiResponse;
 import com.api.crud.api_crud.service.ProjectService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class ProjectController {
     }
 
     @PostMapping("/project/add")
-    public ResponseEntity<ApiResponse> addProject(@RequestBody Project project) {
+    public ResponseEntity<ApiResponse> addProject(@Valid @RequestBody Project project) {
         try {
             Project newProject = projectService.addProject(project);
             return ResponseEntity.status(CREATED).body(new ApiResponse("Proyecto creado:", newProject));
@@ -52,7 +53,7 @@ public class ProjectController {
     }
 
     @PutMapping("/project/update/{id}")
-    public ResponseEntity<ApiResponse> updateProject(@PathVariable Long id, @RequestBody Project project) {
+    public ResponseEntity<ApiResponse> updateProject(@Valid @PathVariable Long id, @RequestBody Project project) {
         try {
             Project updatedProject = projectService.updateProject(project, id);
             return ResponseEntity.ok(new ApiResponse("Proyecto actualizado:", updatedProject));
